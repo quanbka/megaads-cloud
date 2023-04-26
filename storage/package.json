@@ -1,6 +1,6 @@
 {
     "name": "printerval-storage",
-    "version": "1.0.9",
+    "version": "2.0.1",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -9,6 +9,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@google-cloud/storage": "^6.9.5"
+        "axios": "^1.*.*"
     }
 }
