@@ -25,8 +25,6 @@ const buckets = [
     'printerval-central'
 ];
 
-
-
 PrintervalStorage = {
     getFileContent: async function (url) {
         const {
@@ -73,8 +71,7 @@ PrintervalStorage = {
             bucket = folders.shift();
         }
         let file = folders.join('/');
-        let destination = "tmp/" + file;
-        console.log(bucket);
+        let destination = "storage/printerval-storage/" + file;
         return {
             bucket,
             file,
@@ -83,7 +80,6 @@ PrintervalStorage = {
     },
 
     downloadFile: async function (bucket, file, destination) {
-        console.log(bucket);
         try {
             await storage.bucket(bucket).file(file).download({
                 destination
@@ -93,7 +89,6 @@ PrintervalStorage = {
             console.log(`Can not download ${file} from bucket ${bucket}`)
         }
     },
-
 }
 
 module.exports = PrintervalStorage;
