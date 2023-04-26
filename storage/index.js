@@ -38,10 +38,8 @@ PrintervalStorage = {
             return fs.readFileSync(destination);
         }
         await this.prepareFolder(destination);
-        console.log(bucket);
         await this.downloadFile(bucket, file, destination);
         if (fs.existsSync(destination)) {
-            console.log(fs.readFileSync(destination));
             return fs.readFileSync(destination);
         } else {
             return null;
