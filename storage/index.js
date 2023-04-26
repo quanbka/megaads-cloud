@@ -32,6 +32,9 @@ PrintervalStorage = {
             file,
             destination
         } = await this.getParams(url);
+        if (fs.existsSync(destination)) {
+            return fs.readFileSync(destination);
+        }
         await this.prepareFolder(destination);
         await this.downloadFile(bucket, file, destination);
         if (fs.existsSync(destination)) {
