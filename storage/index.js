@@ -26,26 +26,34 @@ const buckets = [
 ];
 
 PrintervalStorage = {
-    getFileContent: async function (url) {
-        const {
-            bucket,
-            file,
-            destination
-        } = await this.getParams(url);
-        if (fs.existsSync(destination)) {
-            return fs.readFileSync(destination);
-        }
-        await this.prepareFolder(destination);
-        await this.downloadFile(bucket, file, destination);
-        if (fs.existsSync(destination)) {
-            return fs.readFileSync(destination);
-        } else {
-            return null;
-        }
-    },
+    getFileContent: function (url) {
+        let self = this;
+        return new Promise((resolve, reject) => {
+            const {
+                bucket,
+                file,
+                destination
+            } = self.getParams(url);
 
-    prepareFolder: async function (destination) {
-        await this.checkDir(await this.getFolder(destination))
+            if (fs.existsSync(destination)) {
+                resolve(fs.readFileSync(destination));
+                return;
+            }
+            self.checkDir(self.getFolder(destination))
+            storage.bucket(bucket).file(file).download((err, contents) => {
+                if (err) {
+                    resolve(null);
+                    console.log(`Can not download file ${file}`);
+                } else {
+                    resolve(contents);
+                    fs.writeFile(destination, contents, err => {
+                        if (err) {
+                            console.log("Can not save file", err);
+                        } 
+                    });
+                }
+            });
+        });
     },
 
     getFolder: function (destination) {
@@ -62,7 +70,7 @@ PrintervalStorage = {
         }
     },
 
-    getParams: async function (url) {
+    getParams: function (url) {
         let bucket = 'printerval-central';
         let folders = parse.parse(url).pathname;
         folders = folders.split('/');
@@ -76,17 +84,6 @@ PrintervalStorage = {
             bucket,
             file,
             destination,
-        }
-    },
-
-    downloadFile: async function (bucket, file, destination) {
-        try {
-            await storage.bucket(bucket).file(file).download({
-                destination
-            });
-        } catch (error) {
-            console.log(error);
-            console.log(`Can not download ${file} from bucket ${bucket}`)
         }
     },
 }
